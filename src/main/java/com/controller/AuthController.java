@@ -91,6 +91,7 @@ public class AuthController {
 		
 		User user = new User(signUpRequest.getUsername(), encoder.encode(signUpRequest.getPassword()));
 		Set<UnitScore> listScores = new HashSet<>();
+		
 		for (EUnit unitName : EUnit.values()) {
 			Unit userUnit = unitRepository.findByName(unitName).get();
 			UnitScore unitScore = new UnitScore(userUnit, 0);
