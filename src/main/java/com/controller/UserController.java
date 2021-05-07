@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -37,6 +38,7 @@ public class UserController {
 	AvatarRepository avatarRepository;
 
 	@PutMapping("/user/score/{id}")
+	@PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
 	public ResponseEntity<?> updateScore(@PathVariable("id") String id,
 			@RequestBody UpdateScoreRequest updateScoreRequest) {
 		Optional<User> userData = userRepository.findById(id);
@@ -91,6 +93,7 @@ public class UserController {
 	}
 
 	@PutMapping("/user/avatar/{id}/{avatar}")
+	@PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
 	public ResponseEntity<?> updateAvatar(@PathVariable("id") String id, @PathVariable("avatar") String avatar) {
 		Optional<User> userData = userRepository.findById(id);
 		if (userData.isPresent()) {
