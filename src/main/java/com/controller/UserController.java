@@ -17,6 +17,7 @@ import com.models.EUnit;
 import com.models.UnitScore;
 import com.models.User;
 import com.payload.request.UpdateScoreRequest;
+import com.payload.response.ChangeAvatarResponse;
 import com.payload.response.MessageResponse;
 import com.payload.response.UpdateScoreResponse;
 import com.repositories.AvatarRepository;
@@ -106,19 +107,19 @@ public class UserController {
 				if (_user.getExp() >= 300) {
 					_user.setAvatar(avatarRepository.findByName(EAvatar.AVATAR_DINOSAUR).get());
 				} else
-					return ResponseEntity.accepted().body(new MessageResponse("Avatar is not unlocked!"));
+					return ResponseEntity.ok().body(new ChangeAvatarResponse("Avatar dinosaur chưa được mở khóa!", false));
 				break;
 			case "dolphin":
 				if (_user.getExp() >= 500) {
 					_user.setAvatar(avatarRepository.findByName(EAvatar.AVATAR_DOLPHIN).get());
 				} else
-					return ResponseEntity.accepted().body(new MessageResponse("Avatar is not unlocked!"));
+					return ResponseEntity.ok().body(new ChangeAvatarResponse("Avatar dolphin chưa được mở khóa!", false));
 				break;
 			default:
-				return ResponseEntity.accepted().body(new MessageResponse("Avatar does not exist!"));
+				return ResponseEntity.notFound().build();
 			}
 			userRepository.save(_user);
-			return ResponseEntity.ok().body(new MessageResponse("Avatar update success!"));
+			return ResponseEntity.ok().body(new ChangeAvatarResponse("Thay đổi avatar thành công!", true));
 		} else {
 			return ResponseEntity.notFound().build();
 		}
