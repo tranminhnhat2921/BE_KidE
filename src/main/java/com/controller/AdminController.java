@@ -2,8 +2,10 @@ package com.controller;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -11,14 +13,19 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.models.ERole;
 import com.models.Role;
 import com.models.UnitScore;
 import com.models.User;
+import com.payload.request.UpdateRoleRequest;
 import com.payload.response.UnitScoreResponse;
 import com.payload.response.UserResponse;
+import com.repositories.RoleRepository;
 import com.repositories.UserRepository;
 
 @CrossOrigin(origins = "*")
@@ -29,6 +36,9 @@ public class AdminController {
 
 	@Autowired
 	UserRepository userRepository;
+	
+	@Autowired
+	RoleRepository roleRepository;
 
 	@GetMapping("/users")
 	public ResponseEntity<?> getAllUsers() {
@@ -65,7 +75,7 @@ public class AdminController {
 	}
 
 	@GetMapping("/users/{id}")
-	public ResponseEntity<?> getTutorialById(@PathVariable("id") String id) {
+	public ResponseEntity<?> getUserById(@PathVariable("id") String id) {
 		Optional<User> userData = userRepository.findById(id);
 		UserResponse userResponse = new UserResponse();
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
@@ -93,5 +103,26 @@ public class AdminController {
 				userResponse.setListScore(listScore);
 		}
 		return ResponseEntity.ok(userResponse);
+	}
+	
+	@PutMapping("/role/{id}")
+	public ResponseEntity<?> changeUserRole(@PathVariable("id") String id, @RequestBody UpdateRoleRequest updateRoleRequest) {
+		Optional<User> userData = userRepository.findById(id);
+		Set<Role> roles = new HashSet<>();
+		if (userData.isPresent()) {
+			User user = userData.get();
+			Role userRole = roleRepository.findByName(ERole.ROLE_USER).get();
+			Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN).get();
+			roles.add(userRole);
+			System.err.println(updateRoleRequest);
+			if(updateRoleRequest.isAdmin()) {
+				roles.add(adminRole);
+				System.err.println(roles);
+			}
+			user.setRoles(roles);
+		} else {
+			return ResponseEntity.notFound().build();
+		}
+		return ResponseEntity.ok(userRepository.save(userData.get()));
 	}
 }
