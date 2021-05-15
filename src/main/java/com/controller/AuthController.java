@@ -1,5 +1,6 @@
 package com.controller;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -122,10 +123,11 @@ public class AuthController {
 				}
 			});
 		}
-		
+			
 		user.setAvatar(avatarRepository.findByName(EAvatar.AVATAR_CAT).get());
 		user.setRoles(roles);
 		user.setListScore(listScores);
+		user.setCreatedAt(new Date());
 		
 		userRepository.save(user);
 		return ResponseEntity.ok(new MessageResponse("User registered successfully!"));

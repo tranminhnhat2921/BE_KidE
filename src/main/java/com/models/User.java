@@ -1,11 +1,11 @@
 package com.models;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
-
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -40,6 +40,8 @@ public class User {
 	
 	@DBRef
 	private Set<UnitScore> listScore;
+	
+    private Date createdAt;
 
 	public User(String username, String password) {
 		this.username = username;
