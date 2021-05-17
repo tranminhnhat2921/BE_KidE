@@ -87,7 +87,7 @@ public class UserController {
 			_user.setExp(newExp);
 			userRepository.save(_user);
 			return ResponseEntity.ok().body(new UpdateScoreResponse("Score less than current score!",
-					updateScoreRequest.getName(), currentScore, newExp + increaseScore/10));
+					updateScoreRequest.getName(), currentScore, newExp));
 		} else {
 			return ResponseEntity.notFound().build();
 		}
