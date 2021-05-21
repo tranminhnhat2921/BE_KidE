@@ -114,10 +114,8 @@ public class AdminController {
 			Role userRole = roleRepository.findByName(ERole.ROLE_USER).get();
 			Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN).get();
 			roles.add(userRole);
-			System.err.println(updateRoleRequest);
 			if(updateRoleRequest.isAdmin()) {
 				roles.add(adminRole);
-				System.err.println(roles);
 			}
 			user.setRoles(roles);
 		} else {
