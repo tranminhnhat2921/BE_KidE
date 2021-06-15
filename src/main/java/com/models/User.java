@@ -7,8 +7,8 @@ import java.util.Set;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -32,15 +32,13 @@ public class User {
 	
 	private int exp;
 
-	@DBRef
 	private Avatar avatar;
 	
-	@DBRef
 	private Set<Role> roles = new HashSet<>();
 	
-	@DBRef
 	private Set<UnitScore> listScore;
 	
+	@Field("created_at")
     private Date createdAt;
 
 	public User(String username, String password) {

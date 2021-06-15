@@ -24,6 +24,7 @@ import com.models.User;
 import com.payload.request.UpdateRoleRequest;
 import com.payload.response.UnitScoreResponse;
 import com.payload.response.UserResponse;
+import com.repositories.AvatarRepository;
 import com.repositories.RoleRepository;
 import com.repositories.UserRepository;
 
@@ -37,6 +38,9 @@ public class AdminController {
 	
 	@Autowired
 	RoleRepository roleRepository;
+	
+	@Autowired
+	AvatarRepository avatarRepository;
 
 	@GetMapping("/users")
 	public ResponseEntity<?> getAllUsers() {
@@ -61,7 +65,7 @@ public class AdminController {
 			List<UnitScoreResponse> listScore = new ArrayList<UnitScoreResponse>();
 			for (UnitScore unitScore : user.getListScore()) {
 				UnitScoreResponse unitScoreResponse = new UnitScoreResponse();
-				unitScoreResponse.setName(unitScore.getUnit().getName().name());
+				unitScoreResponse.setName(unitScore.getName());
 				unitScoreResponse.setScore(String.valueOf(unitScore.getScore()));
 				listScore.add(unitScoreResponse);
 			}
@@ -94,7 +98,7 @@ public class AdminController {
 				List<UnitScoreResponse> listScore = new ArrayList<UnitScoreResponse>();
 				for (UnitScore unitScore : user.getListScore()) {
 					UnitScoreResponse unitScoreResponse = new UnitScoreResponse();
-					unitScoreResponse.setName(unitScore.getUnit().getName().name());
+					unitScoreResponse.setName(unitScore.getName());
 					unitScoreResponse.setScore(String.valueOf(unitScore.getScore()));
 					listScore.add(unitScoreResponse);
 				}

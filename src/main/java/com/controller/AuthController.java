@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.models.EAvatar;
 import com.models.ERole;
-import com.models.EUnit;
 import com.models.Role;
 import com.models.Unit;
 import com.models.UnitScore;
@@ -33,9 +32,8 @@ import com.payload.response.JwtResponse;
 import com.payload.response.MessageResponse;
 import com.repositories.AvatarRepository;
 import com.repositories.RoleRepository;
-import com.repositories.UserRepository;
 import com.repositories.UnitRepository;
-import com.repositories.UnitScoreRepository;
+import com.repositories.UserRepository;
 import com.security.JwtUtils;
 import com.services.UserDetailsImpl;
 
@@ -52,13 +50,10 @@ public class AuthController {
 	RoleRepository roleRepository;
 	
 	@Autowired
-	UnitRepository unitRepository;
+	AvatarRepository avatarRepository;
 	
 	@Autowired
-	UnitScoreRepository unitScoreRepository;
-
-	@Autowired
-	AvatarRepository avatarRepository;
+	UnitRepository unitRepository;
 	
 	@Autowired
 	PasswordEncoder encoder;
@@ -89,12 +84,11 @@ public class AuthController {
 		}
 		
 		User user = new User(signUpRequest.getUsername(), encoder.encode(signUpRequest.getPassword()));
-		Set<UnitScore> listScores = new HashSet<>();
 		
-		for (EUnit unitName : EUnit.values()) {
-			Unit userUnit = unitRepository.findByName(unitName).get();
-			UnitScore unitScore = new UnitScore(userUnit, 0);
-			unitScoreRepository.save(unitScore);
+		Set<UnitScore> listScores = new HashSet<>();
+		List<Unit> listUnits = unitRepository.findAll();
+		for (Unit unit : listUnits) {
+			UnitScore unitScore = new UnitScore(unit.getName().name(), 0);
 			listScores.add(unitScore);
 		}
 		

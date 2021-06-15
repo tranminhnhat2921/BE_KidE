@@ -27,7 +27,6 @@ import com.payload.response.MessageResponse;
 import com.payload.response.UpdateScoreResponse;
 import com.repositories.AvatarRepository;
 import com.repositories.RoleRepository;
-import com.repositories.UnitScoreRepository;
 import com.repositories.UserRepository;
 
 @RestController
@@ -38,13 +37,10 @@ public class UserController {
 	UserRepository userRepository;
 
 	@Autowired
-	UnitScoreRepository unitScoreRepository;
-
+	RoleRepository roleRepository;
+	
 	@Autowired
 	AvatarRepository avatarRepository;
-
-	@Autowired
-	RoleRepository roleRepository;
 	
 	@PutMapping("/user/{id}")
 	@PreAuthorize("hasRole('ADMIN')")
@@ -89,47 +85,45 @@ public class UserController {
 			@RequestBody UpdateScoreRequest updateScoreRequest) {
 		Optional<User> userData = userRepository.findById(id);
 		if (userData.isPresent()) {
-			User _user = userData.get();
-			EUnit updateUnitName;
-			int newExp = _user.getExp() + 2;
+			User user = userData.get();
+			String updateUnitName;
+			int newExp = user.getExp() + 2;
 			int currentScore = 0;
 			int increaseScore = 0;
 
 			switch (updateScoreRequest.getName()) {
 			case "aphabet":
-				updateUnitName = EUnit.UNIT_APHABET;
+				updateUnitName = EUnit.UNIT_APHABET.name();
 				break;
 			case "number":
-				updateUnitName = EUnit.UNIT_NUMBER;
+				updateUnitName = EUnit.UNIT_NUMBER.name();
 				break;
 			case "color":
-				updateUnitName = EUnit.UNIT_COLOR;
+				updateUnitName = EUnit.UNIT_COLOR.name();
 				break;
 			case "animal":
-				updateUnitName = EUnit.UNIT_ANIMAL;
+				updateUnitName = EUnit.UNIT_ANIMAL.name();
 				break;
 			default:
 				return ResponseEntity.accepted().body(new MessageResponse("Unit does not exist!"));
 			}
 
-			for (UnitScore unitScore : _user.getListScore()) {
-				if (unitScore.getUnit().getName().equals(updateUnitName)) {
+			for (UnitScore unitScore : user.getListScore()) {
+				if (unitScore.getName().equals(updateUnitName)) {
 					currentScore = unitScore.getScore();
 					increaseScore = updateScoreRequest.getScore() - currentScore;
 					if (unitScore.getScore() < updateScoreRequest.getScore()) {
-						UnitScore _unitScore = unitScoreRepository.findById(unitScore.getId()).get();
-						_unitScore.setScore(updateScoreRequest.getScore());
-						unitScoreRepository.save(_unitScore);
-						_user.setExp(newExp);
-						userRepository.save(_user);
+						unitScore.setScore(updateScoreRequest.getScore());
+						user.setExp(newExp);
+						userRepository.save(user);
 						return ResponseEntity.ok().body(new UpdateScoreResponse("Update score success!",
-								updateScoreRequest.getName(), _unitScore.getScore(), newExp + increaseScore / 10));
+								updateScoreRequest.getName(), unitScore.getScore(), newExp + increaseScore / 10));
 					}
 					break;
 				}
 			}
-			_user.setExp(newExp);
-			userRepository.save(_user);
+			user.setExp(newExp);
+			userRepository.save(user);
 			return ResponseEntity.ok().body(new UpdateScoreResponse("Score less than current score!",
 					updateScoreRequest.getName(), currentScore, newExp));
 		} else {
